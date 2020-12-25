@@ -1,0 +1,92 @@
+name: Install Clang
+description: Install Clang & LLVM
+
+inputs:
+  platform:
+    description: Target platform
+    required: false
+    default: x64
+  cygwin:
+    description: Install inside Cygwin
+    required: false
+    default: 0
+
+outputs:
+  clang:
+    description: clang executable name or path
+    value: '${{ steps.setup.outputs.clang }}'
+  clangxx:
+    description: clang++ executable name or path
+    value: '${{ steps.setup.outputs.clangxx }}'
+
+runs:
+  using: composite
+  steps:
+    - id: setup
+      run: |
+        New-Variable os -Value '${{ runner.os }}' -Option Constant
+
+        New-Variable linux_host -Value ($os -eq 'Linux') -Option Constant
+        New-Variable cygwin_host -Value ('${{ inputs.cygwin }}' -eq '1') -Option Constant
+        New-Variable windows_host -Value ($os -eq 'Windows' -and !$cygwin) -Option Constant
+
+        New-Variable x64 -Value ('${{ inputs.platform }}' -eq 'x64') -Option Constant
+
+        function Locate-Choco {
+            $path = Get-Command 'choco' -ErrorAction SilentlyContinue
+            if ($path) {
+                $path.Path
+            } else {
+                Join-Path ${env:ProgramData} 'chocolatey' 'bin' 'choco'
+            }
+        }
+
+        if ($linux_host) {
+            sudo apt update
+            if ($x64) {
+                sudo apt install -y clang g++
+            } else {
+                sudo apt install -y clang g++-multilib
+            }
+
+            echo "::set-output name=clang::clang"
+            echo "::set-output name=clangxx::clang++"
+        } elseif ($cygwin_host) {
+            if (!$x64) {
+                echo @'
+        ::warning ::
+        32-bit-targeting Clang is unavailable on 64-bit Cygwin.
+        Please use 32-bit Cygwin instead.
+        If you _are_ using 32-bit Cygwin, please ignore this message.
+        '@
+            }
+            $choco = Locate-Choco
+
+            # IDK why, but without libiconv-devel, even a "Hello, world!"
+            # C++ app cannot be compiled as of December 2020.
+            # Also, libstdc++ is required, and for simplicity's sake, gcc-g++
+            # is installed.
+            & $choco install -y --no-progress --source=cygwin clang libiconv-devel gcc-g++
+
+            # clang/clang++ are symlinks on Cygwin, pointing to clang-VERSION.exe.
+            $clang = cygpath.exe -wa (readlink.exe --canonicalize-existing /usr/bin/clang)
+            $clangxx = cygpath.exe -wa (readlink.exe --canonicalize-existing /usr/bin/clang++)
+
+            echo "::set-output name=clang::$clang"
+            echo "::set-output name=clangxx::$clangxx"
+        } elseif ($windows_host) {
+            $choco = Locate-Choco
+
+            & $choco install -y --no-progress llvm
+            echo (Join-Path $env:ProgramFiles LLVM bin) >> $env:GITHUB_PATH
+
+            echo "::set-output name=clang::clang"
+            echo "::set-output name=clangxx::clang++"
+        } else {
+            throw "Sorry, installing Clang is unsupported on $os"
+        }
+      shell: pwsh
+
+branding:
+  icon: star
+  color: green
