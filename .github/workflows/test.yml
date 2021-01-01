@@ -52,7 +52,6 @@ jobs:
         if: matrix.cygwin
 
       - name: Set up Clang
-        id: setup
         uses: ./
         with:
           platform: '${{ matrix.platform }}'
@@ -65,16 +64,14 @@ jobs:
               $flags += '-m32'
           }
           $flags += @(
-              '-x', 'c++',
               '-std=c++14',
               '-o', 'foo.exe',
-              'foo.cpp',
-              '-lstdc++'
+              'foo.cpp'
           )
           if ('${{ runner.os }}' -eq 'Linux') {
               $flags += '-lpthread'
           }
-          & '${{ steps.setup.outputs.clangxx }}' $flags
+          clang++ $flags
 
       - name: Run foo.exe
         run: |
