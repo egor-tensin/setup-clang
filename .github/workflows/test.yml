@@ -67,7 +67,7 @@ jobs:
           $flags += @(
               '-x', 'c++',
               '-std=c++14',
-              '-o', 'foo',
+              '-o', 'foo.exe',
               'foo.cpp',
               '-lstdc++'
           )
@@ -83,7 +83,7 @@ jobs:
           Doing something #2
           Doing something #3
           "@
-          $actual = & (Join-Path . foo)
+          $actual = & (Join-Path . foo.exe)
           $actual = $actual -join [Environment]::NewLine
           $($actual -eq $expected) -or $(throw @"
           Unexpected output:
