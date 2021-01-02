@@ -126,9 +126,9 @@ runs:
 
         if ($linux_host) {
             if ($x64) {
-                $pkgs = 'clang','g++'
+                $pkgs = 'clang','g++','llvm'
             } else {
-                $pkgs = 'clang','g++-multilib'
+                $pkgs = 'clang','g++-multilib','llvm'
             }
             Install-Package $pkgs
 
@@ -148,7 +148,7 @@ runs:
             # C++ app cannot be compiled as of December 2020. Also, libstdc++
             # is required; it's simpler to install gcc-g++ for all the
             # dependencies.
-            Install-Package clang libiconv-devel gcc-g++
+            Install-Package clang gcc-g++ libiconv-devel llvm
 
             # clang/clang++ are Cygwin symlinks, pointing to clang-X.exe. It's
             # convenient to make proper executables instead so that they can be
