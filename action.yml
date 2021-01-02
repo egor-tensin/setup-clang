@@ -153,7 +153,7 @@ runs:
             # clang/clang++ are Cygwin symlinks, pointing to clang-X.exe. It's
             # convenient to make proper executables instead so that they can be
             # called from Windows' command prompt.
-            find.exe /usr/bin -iname 'clang*' -type l | %{ Fix-CygwinLink $_ }
+            find.exe /usr/bin -type l -a '-(' -iname 'clang*' -o -iname 'llvm*' '-)' | %{ Fix-CygwinLink $_ }
 
             Link-Exe -Exe clang -LinkName cc
             Link-Exe -Exe clang++ -LinkName c++
