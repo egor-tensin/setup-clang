@@ -64,9 +64,34 @@ runs:
             Join-Path $dirname (Split-Path $Path -Leaf)
         }
 
+        function Fix-CygwinLink {
+            # Replace a Cygwin symlink with a hardlink.
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Path
+            )
+
+            $link_path = $Path
+            $link_winpath = Convert-CygwinPath $link_path
+            $link_ext = [System.IO.Path]::GetExtension($link_path)
+            $dest_path = readlink.exe --canonicalize-existing -- $link_path
+            $dest_winpath = Convert-CygwinPath $dest_path
+            $dest_ext = [System.IO.Path]::GetExtension($dest_path)
+            echo "Removing symlink: $link_winpath"
+            Remove-Item $link_winpath -Force
+            if ($dest_ext.ToLower() -ne $link_ext.ToLower()) {
+                $link_winpath += $dest_ext
+            }
+            echo "Creating hardlink '$link_winpath', pointing to '$dest_winpath'"
+            New-Item -ItemType HardLink -Path $link_winpath -Value $dest_winpath | Out-Null
+        }
+
         if ($linux_host) {
-            $pkgs = @('clang')
-            $pkgs += if ($x64) { 'g++' } else { 'g++-multilib' }
+            if ($x64) {
+                $pkgs = 'clang','g++'
+            } else {
+                $pkgs = 'clang','g++-multilib'
+            }
             Install-Package $pkgs
         } elseif ($cygwin_host) {
             if (!$x64) {
@@ -86,16 +111,7 @@ runs:
             # clang/clang++ are Cygwin symlinks, pointing to clang-X.exe. It's
             # convenient to make proper executables instead so that they can be
             # called from Windows' command prompt.
-            find.exe /usr/bin -iname 'clang*' -type l | %{
-                $link_path = $_
-                $dest_path = readlink.exe --canonicalize-existing -- $link_path
-                $link_winpath = Convert-CygwinPath $link_path
-                $dest_winpath = Convert-CygwinPath $dest_path
-                echo "Removing symlink: $link_winpath"
-                Remove-Item $link_winpath -Force
-                echo "Creating hardlink '$link_winpath.exe', pointing to '$dest_winpath'"
-                New-Item -ItemType HardLink -Path "$link_winpath.exe" -Value $dest_winpath | Out-Null
-            }
+            find.exe /usr/bin -iname 'clang*' -type l | %{ Fix-CygwinLink $_ }
         } elseif ($windows_host) {
             Install-Package llvm
             echo (Join-Path $env:ProgramFiles LLVM bin) >> $env:GITHUB_PATH
