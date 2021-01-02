@@ -92,6 +92,7 @@ runs:
                 [Parameter(Mandatory=$true)]
                 [string] $Path
             )
+
             $realpath = realpath.exe --no-symlinks -- $Path
             $dirname = dirname.exe -- $realpath
             $dirname = cygpath.exe -wa $dirname
@@ -108,11 +109,14 @@ runs:
             $link_path = $Path
             $link_winpath = Convert-CygwinPath $link_path
             $link_ext = [System.IO.Path]::GetExtension($link_path)
+
             $dest_path = readlink.exe --canonicalize-existing -- $link_path
             $dest_winpath = Convert-CygwinPath $dest_path
             $dest_ext = [System.IO.Path]::GetExtension($dest_path)
+
             echo "Removing symlink: $link_winpath"
             Remove-Item $link_winpath -Force
+
             if ($dest_ext.ToLower() -ne $link_ext.ToLower()) {
                 $link_winpath += $dest_ext
             }
@@ -139,6 +143,7 @@ runs:
         If you _are_ using 32-bit Cygwin, please ignore this message.
         '@
             }
+
             # IDK why, but without libiconv-devel, even a "Hello, world!"
             # C++ app cannot be compiled as of December 2020. Also, libstdc++
             # is required; it's simpler to install gcc-g++ for all the
