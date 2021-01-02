@@ -58,10 +58,10 @@ runs:
                 [Parameter(Mandatory=$true)]
                 [string] $Path
             )
-            $Path = realpath.exe --no-symlinks -- $Path
-            $dirname = dirname.exe -- $Path
+            $realpath = realpath.exe --no-symlinks -- $Path
+            $dirname = dirname.exe -- $realpath
             $dirname = cygpath.exe -wa $dirname
-            Join-Path $dirname (Split-Path $Path -Leaf)
+            Join-Path $dirname (Split-Path $realpath -Leaf)
         }
 
         function Fix-CygwinLink {
