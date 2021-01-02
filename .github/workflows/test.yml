@@ -86,3 +86,12 @@ jobs:
           Unexpected output:
           $actual
           "@)
+
+      - name: Check cc/c++
+        run: |
+          $cc = & cc --version
+          echo $cc
+          $($cc | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `cc --version` output")
+          $cxx = & c++ --version
+          echo $cxx
+          $($cxx | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `c++ --version` output")

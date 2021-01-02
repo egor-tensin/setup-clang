@@ -52,6 +52,40 @@ runs:
             }
         }
 
+        function Link-Exe {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $ExeName,
+                [Parameter(Mandatory=$true)]
+                [string] $LinkName
+            )
+
+            # Full executable path, including the extension:
+            $exe_path = (Get-Command $ExeName).Path
+            $exe_dir = Split-Path $exe_path
+            $exe_name = Split-Path $exe_path -Leaf
+            $exe_ext = [System.IO.Path]::GetExtension($exe_name)
+
+            $link_dir = if ($script:linux_host) { '/usr/local/bin' } else { $exe_dir }
+            $link_name = $LinkName
+            # On Windows, append .exe if required:
+            if (!$script:linux_host -and [System.IO.Path]::GetExtension($link_name) -ne $exe_ext) {
+                $link_name += $exe_ext
+            }
+            $link_path = Join-Path $link_dir $link_name
+
+            echo "Creating link '$link_path', pointing to '$exe_path'"
+            if ($script:linux_host) {
+                sudo rm -f -- $link_path
+                sudo ln -s -- $exe_path $link_path
+            } else {
+                if (Test-Path $link_path) {
+                    Remove-Item $link_path -Force
+                }
+                New-Item -ItemType HardLink -Path $link_path -Value $exe_path | Out-Null
+            }
+        }
+
         function Convert-CygwinPath {
             # Like cygpath -wa, but don't resolve symlinks.
             param(
@@ -93,6 +127,9 @@ runs:
                 $pkgs = 'clang','g++-multilib'
             }
             Install-Package $pkgs
+
+            Link-Exe -Exe clang -LinkName cc
+            Link-Exe -Exe clang++ -LinkName c++
         } elseif ($cygwin_host) {
             if (!$x64) {
                 echo @'
@@ -112,9 +149,17 @@ runs:
             # convenient to make proper executables instead so that they can be
             # called from Windows' command prompt.
             find.exe /usr/bin -iname 'clang*' -type l | %{ Fix-CygwinLink $_ }
+
+            Link-Exe -Exe clang -LinkName cc
+            Link-Exe -Exe clang++ -LinkName c++
         } elseif ($windows_host) {
             Install-Package llvm
-            echo (Join-Path $env:ProgramFiles LLVM bin) >> $env:GITHUB_PATH
+
+            $bin_dir = Join-Path $env:ProgramFiles LLVM bin
+            echo $bin_dir >> $env:GITHUB_PATH
+
+            Link-Exe -Exe (Join-Path $bin_dir clang) -LinkName cc
+            Link-Exe -Exe (Join-Path $bin_dir clang++) -LinkName c++
         } else {
             throw "Sorry, installing Clang is unsupported on $os"
         }
