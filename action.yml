@@ -32,6 +32,26 @@ runs:
             }
         }
 
+        function Install-Package {
+            param(
+                [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
+                [string[]] $Packages
+            )
+
+            if ($script:linux_host) {
+                sudo apt-get update -yq
+                sudo apt-get install -yq --no-install-recommends $Packages
+            } elseif ($script:cygwin_host) {
+                $choco = Locate-Choco
+                & $choco install -y --no-progress --source=cygwin $Packages
+            } elseif ($script:windows_host) {
+                $choco = Locate-Choco
+                & $choco install -y --no-progress $Packages
+            } else {
+                throw "Sorry, installing packages is unsupported on $script:os"
+            }
+        }
+
         function Convert-CygwinPath {
             # Like cygpath -wa, but don't resolve symlinks.
             param(
@@ -45,12 +65,9 @@ runs:
         }
 
         if ($linux_host) {
-            sudo apt update
-            if ($x64) {
-                sudo apt install -y clang g++
-            } else {
-                sudo apt install -y clang g++-multilib
-            }
+            $pkgs = @('clang')
+            $pkgs += if ($x64) { 'g++' } else { 'g++-multilib' }
+            Install-Package $pkgs
         } elseif ($cygwin_host) {
             if (!$x64) {
                 echo @'
@@ -60,13 +77,11 @@ runs:
         If you _are_ using 32-bit Cygwin, please ignore this message.
         '@
             }
-            $choco = Locate-Choco
-
             # IDK why, but without libiconv-devel, even a "Hello, world!"
             # C++ app cannot be compiled as of December 2020. Also, libstdc++
             # is required; it's simpler to install gcc-g++ for all the
             # dependencies.
-            & $choco install -y --no-progress --source=cygwin clang libiconv-devel gcc-g++
+            Install-Package clang libiconv-devel gcc-g++
 
             # clang/clang++ are Cygwin symlinks, pointing to clang-X.exe. It's
             # convenient to make proper executables instead so that they can be
@@ -82,9 +97,7 @@ runs:
                 New-Item -ItemType HardLink -Path "$link_winpath.exe" -Value $dest_winpath | Out-Null
             }
         } elseif ($windows_host) {
-            $choco = Locate-Choco
-
-            & $choco install -y --no-progress llvm
+            Install-Package llvm
             echo (Join-Path $env:ProgramFiles LLVM bin) >> $env:GITHUB_PATH
         } else {
             throw "Sorry, installing Clang is unsupported on $os"
