@@ -74,7 +74,7 @@ runs:
             }
             $link_path = Join-Path $link_dir $link_name
 
-            echo "Creating link '$link_path', pointing to '$exe_path'"
+            echo "Creating link $link_path -> $exe_path"
             if ($script:linux_host) {
                 sudo rm -f -- $link_path
                 sudo ln -s -- $exe_path $link_path
