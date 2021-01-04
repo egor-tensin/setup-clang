@@ -93,9 +93,6 @@ runs:
                 $pkgs = 'clang','g++-multilib','llvm'
             }
             Install-Package $pkgs
-
-            Link-Exe -Exe clang -LinkName cc
-            Link-Exe -Exe clang++ -LinkName c++
         } elseif ($cygwin_host) {
             if (!$x64) {
                 echo @'
@@ -111,17 +108,11 @@ runs:
             # is required; it's simpler to install gcc-g++ for all the
             # dependencies.
             Install-Package clang gcc-g++ libiconv-devel llvm
-
-            Link-Exe -Exe clang -LinkName cc
-            Link-Exe -Exe clang++ -LinkName c++
         } elseif ($windows_host) {
             Install-Package llvm
 
             $bin_dir = Join-Path $env:ProgramFiles LLVM bin
             echo $bin_dir >> $env:GITHUB_PATH
-
-            Link-Exe -Exe (Join-Path $bin_dir clang) -LinkName cc
-            Link-Exe -Exe (Join-Path $bin_dir clang++) -LinkName c++
         } else {
             throw "Sorry, installing Clang is unsupported on $os"
         }
@@ -143,6 +134,17 @@ runs:
             echo "Creating hardlink $link_path -> $dest_path" && ln -- "$dest_path" "$link_path"
         done < <( find /usr/bin -type l -a '-(' -iname 'clang*' -o -iname 'llvm*' '-)' -print0 )
         '@ | & bash.exe --login -o errexit -o nounset -o pipefail -o igncr
+        }
+
+        if ($linux_host) {
+            Link-Exe -Exe clang -LinkName cc
+            Link-Exe -Exe clang++ -LinkName c++
+        } elseif ($cygwin_host) {
+            Link-Exe -Exe clang -LinkName cc
+            Link-Exe -Exe clang++ -LinkName c++
+        } elseif ($windows_host) {
+            Link-Exe -Exe (Join-Path $bin_dir clang) -LinkName cc
+            Link-Exe -Exe (Join-Path $bin_dir clang++) -LinkName c++
         }
       shell: pwsh
 
