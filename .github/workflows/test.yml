@@ -56,6 +56,8 @@ jobs:
         with:
           platform: '${{ matrix.platform }}'
           cygwin: '${{ matrix.cygwin }}'
+          cc: 1
+          hardlinks: 1
 
       - name: Build foo.exe
         run: |
@@ -87,9 +89,11 @@ jobs:
 
       - name: Check cc/c++
         run: |
+          echo (Get-Command cc).Path
           $cc = & cc --version
           echo $cc
           $($cc | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `cc --version` output")
+          echo (Get-Command c++).Path
           $cxx = & c++ --version
           echo $cxx
           $($cxx | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `c++ --version` output")
