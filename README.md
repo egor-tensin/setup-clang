@@ -1,7 +1,7 @@
 Set up Clang
 ============
 
-[![Test](https://github.com/egor-tensin/setup-clang/workflows/Test/badge.svg)](https://github.com/egor-tensin/setup-gcc/actions?query=workflow%3ATest)
+[![Test](https://github.com/egor-tensin/setup-clang/workflows/Test/badge.svg)](https://github.com/egor-tensin/setup-clang/actions?query=workflow%3ATest)
 
 This is a GitHub action that sets up Clang & LLVM in your workflow run.
 
