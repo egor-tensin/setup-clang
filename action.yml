@@ -2,6 +2,10 @@ name: Install Clang
 description: Install Clang & LLVM
 
 inputs:
+  version:
+    description: Version to install
+    required: false
+    default: latest
   platform:
     description: Target platform
     required: false
@@ -19,16 +23,27 @@ inputs:
     required: false
     default: 0
 
+outputs:
+  clang:
+    description: clang binary name
+    value: '${{ steps.install.outputs.clang }}'
+  clangxx:
+    description: clang++ binary name
+    value: '${{ steps.install.outputs.clangxx }}'
+
 runs:
   using: composite
   steps:
-    - run: |
+    - id: install
+      run: |
         New-Variable os -Value '${{ runner.os }}' -Option Constant
 
         New-Variable linux_host -Value ($os -eq 'Linux') -Option Constant
         New-Variable cygwin_host -Value ('${{ inputs.cygwin }}' -eq '1') -Option Constant
         New-Variable windows_host -Value ($os -eq 'Windows' -and !$cygwin_host) -Option Constant
 
+        New-Variable version -Value ('${{ inputs.version }}') -Option Constant
+        New-Variable latest -Value ($version -eq 'latest') -Option Constant
         New-Variable x64 -Value ('${{ inputs.platform }}' -eq 'x64') -Option Constant
 
         function Locate-Choco {
@@ -60,13 +75,92 @@ runs:
             }
         }
 
-        if ($linux_host) {
-            if ($x64) {
-                $pkgs = 'clang','g++','llvm'
-            } else {
-                $pkgs = 'clang','g++-multilib','llvm'
+        function Get-DistroVersion {
+            if (!(Get-Command lsb_release -ErrorAction SilentlyContinue)) {
+                throw "Couldn't find lsb_release; LLVM only provides repositories for Debian/Ubuntu"
             }
-            Install-Package $pkgs
+            $distro = lsb_release -is
+            $version = lsb_release -sr
+            "$distro-$version"
+        }
+
+        function Format-UpstreamVersion {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Version
+            )
+
+            switch -Exact ($Version) {
+                # Since version 7, they dropped the .0 suffix. The earliest
+                # version supported is 5.0 on Bionic; versions 5 and 6 are
+                # mapped to LLVM-friendly 5.0 and 6.0.
+                '5' { '5.0' }
+                '6' { '6.0' }
+                default { $Version }
+            }
+        }
+
+        function Format-AptLine {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Version
+            )
+
+            $distro = Get-DistroVersion
+
+            switch -Wildcard -CaseSensitive ($distro) {
+                'Debian-9*'       { "deb http://apt.llvm.org/stretch/  llvm-toolchain-stretch-$Version  main" }
+                'Debian-10*'      { "deb http://apt.llvm.org/buster/   llvm-toolchain-buster-$Version   main" }
+                'Debian-11*'      { "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-$Version main" }
+                'Debian-unstable' { "deb http://apt.llvm.org/unstable/ llvm-toolchain-$Version main" }
+                'Debian-testing'  { "deb http://apt.llvm.org/unstable/ llvm-toolchain-$Version main" }
+                'Ubuntu-16.04'    { "deb http://apt.llvm.org/xenial/   llvm-toolchain-xenial-$Version   main" }
+                'Ubuntu-18.04'    { "deb http://apt.llvm.org/bionic/   llvm-toolchain-bionic-$Version   main" }
+                'Ubuntu-18.10'    { "deb http://apt.llvm.org/cosmic/   llvm-toolchain-cosmic-$Version   main" }
+                'Ubuntu-19.04'    { "deb http://apt.llvm.org/disco/    llvm-toolchain-disco-$Version    main" }
+                'Ubuntu-19.10'    { "deb http://apt.llvm.org/eoan/     llvm-toolchain-eoan-$Version     main" }
+                'Ubuntu-20.04'    { "deb http://apt.llvm.org/focal/    llvm-toolchain-focal-$Version    main" }
+                'Ubuntu-20.10'    { "deb http://apt.llvm.org/groovy/   llvm-toolchain-groovy-$Version   main" }
+                'Ubuntu-21.04'    { "deb http://apt.llvm.org/hirsute/  llvm-toolchain-hirsute-$Version  main" }
+
+                default { throw "Unsupported distribution: $distro" }
+            }
+        }
+
+        function Add-UpstreamRepo {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Version
+            )
+
+            wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+            $apt_line = Format-AptLine $Version
+            sudo add-apt-repository --yes --update $apt_line
+        }
+
+        $clang = 'clang'
+        $clangxx = 'clang++'
+
+        if ($linux_host) {
+            $pkg_clang = 'clang'
+            $pkg_llvm = 'llvm'
+            $pkg_gxx = 'g++'
+
+            if (!$latest) {
+                $pkg_version = Format-UpstreamVersion $version
+                Add-UpstreamRepo $pkg_version
+
+                $pkg_clang = "$pkg_clang-$pkg_version"
+                $pkg_llvm = "$pkg_llvm-$pkg_version"
+
+                $clang = "$clang-$pkg_version"
+                $clangxx = "$clangxx-$pkg_version"
+            }
+            if (!$x64) {
+                $pkg_gxx = 'g++-multilib'
+            }
+
+            Install-Package $pkg_clang $pkg_llvm $pkg_gxx
         } elseif ($cygwin_host) {
             if (!$x64) {
                 echo @'
@@ -90,6 +184,9 @@ runs:
         } else {
             throw "Sorry, installing Clang is unsupported on $os"
         }
+
+        echo "::set-output name=clang::$clang"
+        echo "::set-output name=clangxx::$clangxx"
       shell: pwsh
 
     - run: |
@@ -124,8 +221,8 @@ runs:
         }
 
         if ($cc) {
-            Link-Exe clang cc
-            Link-Exe clang++ c++
+            Link-Exe '${{ steps.install.outputs.clang }}' cc
+            Link-Exe '${{ steps.install.outputs.clangxx }}' c++
         }
       shell: pwsh
 

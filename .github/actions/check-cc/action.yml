@@ -1,9 +1,15 @@
 name: Check cc/c++
 description: Check cc/c++
+inputs:
+  version:
+    description: Specific version to check
+    required: false
 runs:
   using: composite
   steps:
     - run: |
+        $version = '${{ inputs.version }}'
+
         function Check-Exe {
             param(
                 [Parameter(Mandatory=$true)]
@@ -15,6 +21,10 @@ runs:
             echo $output
 
             $($output | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
+
+            if ($script:version) {
+                $($output | Select-String -Pattern "$script:version." -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
+            }
         }
 
         Check-Exe cc
