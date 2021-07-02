@@ -1,0 +1,22 @@
+name: Check cc/c++
+description: Check cc/c++
+runs:
+  using: composite
+  steps:
+    - run: |
+        function Check-Exe {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Exe
+            )
+
+            echo (Get-Command $Exe).Path
+            $output = & $Exe --version
+            echo $output
+
+            $($output | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
+        }
+
+        Check-Exe cc
+        Check-Exe c++
+      shell: pwsh
