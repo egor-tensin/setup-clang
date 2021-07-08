@@ -92,8 +92,9 @@ runs:
 
             switch -Exact ($Version) {
                 # Since version 7, they dropped the .0 suffix. The earliest
-                # version supported is 5.0 on Bionic; versions 5 and 6 are
-                # mapped to LLVM-friendly 5.0 and 6.0.
+                # version supported is 3.9 on Bionic; versions 4, 5 and 6 are
+                # mapped to LLVM-friendly 4.0, 5.0 and 6.0.
+                '4' { '4.0' }
                 '5' { '5.0' }
                 '6' { '6.0' }
                 default { $Version }

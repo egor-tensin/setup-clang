@@ -50,7 +50,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up Clang
+      - id: setup
+        name: Set up Clang
         uses: ./
         with:
           version: '${{ matrix.version }}'
@@ -59,7 +60,7 @@ jobs:
       - name: Build foo.exe
         uses: ./.github/actions/build-foo
         with:
-          version: '${{ matrix.version }}'
+          binary: '${{ steps.setup.outputs.clangxx }}'
       - name: Run foo.exe
         uses: ./.github/actions/run-foo
       - name: Check cc/c++

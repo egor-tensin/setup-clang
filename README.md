@@ -44,6 +44,11 @@ API
 | hardlinks | *any*   | ✓       | Cygwin: don't convert any symlinks.
 |           | 1       |         | Cygwin: convert symlinks in /usr/bin to hardlinks.
 
+| Output  | Example   | Description
+| ------- | --------- | -----------
+| clang   | clang-4.0 | clang compiler binary file name
+| clangxx | clang++-7 | clang++ compiler binary file name
+
 Supported versions
 ------------------
 
