@@ -46,8 +46,8 @@ API
 
 | Output  | Example   | Description
 | ------- | --------- | -----------
-| clang   | clang-4.0 | clang compiler binary file name
-| clangxx | clang++-7 | clang++ compiler binary file name
+| clang   | clang-4.0 | `clang` binary name
+| clangxx | clang++-7 | `clang++` binary name
 
 Supported versions
 ------------------
