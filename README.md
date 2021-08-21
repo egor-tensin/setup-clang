@@ -61,7 +61,7 @@ The `version` parameter value is not checked for being an available version for
 the current distribution.
 The supported versions for a particular distribution are those found in that
 distro's repositories & those in the LLVM repository.
-For example, the supported versions for Bionic & Focal as of July 2021 are
+For example, the supported versions for Bionic & Focal as of August 2021 are
 listed below.
 
 | `version` | Bionic | Focal
@@ -76,6 +76,7 @@ listed below.
 | 10        | ✓      | ✓
 | 11        | ✓      | ✓
 | 12        | ✓      | ✓
+| 13        | ✓      | ✓
 
 This table is not definitive; I expect more future versions to be made
 available, especially for Focal.
