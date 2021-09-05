@@ -15,7 +15,7 @@ inputs:
     required: false
     default: 0
   cc:
-    description: Set up cc/c++ executables
+    description: Set up cc/clang/c++/clang++ executables
     required: false
     default: 1
   hardlinks:
@@ -211,6 +211,9 @@ runs:
 
         New-Variable cc -Value ('${{ inputs.cc }}' -eq '1') -Option Constant
 
+        New-Variable clang -Value '${{ steps.install.outputs.clang }}' -Option Constant
+        New-Variable clangxx -Value '${{ steps.install.outputs.clangxx }}' -Option Constant
+
         function Link-Exe {
             param(
                 [Parameter(Mandatory=$true)]
@@ -234,8 +237,14 @@ runs:
         }
 
         if ($cc) {
-            Link-Exe '${{ steps.install.outputs.clang }}' cc
-            Link-Exe '${{ steps.install.outputs.clangxx }}' c++
+            Link-Exe $clang cc
+            if ($clang -ne 'clang') {
+                Link-Exe $clang 'clang'
+            }
+            Link-Exe $clangxx c++
+            if ($clangxx -ne 'clang++') {
+                Link-Exe $clangxx 'clang++'
+            }
         }
       shell: pwsh
 

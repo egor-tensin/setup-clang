@@ -1,5 +1,5 @@
-name: Check cc/c++
-description: Check cc/c++
+name: Check symlinks
+description: Check symlinks
 inputs:
   version:
     description: Specific version to check
@@ -28,5 +28,7 @@ runs:
         }
 
         Check-Exe cc
+        Check-Exe clang
         Check-Exe c++
+        Check-Exe clang++
       shell: pwsh
