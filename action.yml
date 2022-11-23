@@ -130,6 +130,8 @@ runs:
                 'Ubuntu-20.10'    { "deb http://apt.llvm.org/groovy/   llvm-toolchain-groovy-$Version   main" }
                 'Ubuntu-21.04'    { "deb http://apt.llvm.org/groovy/   llvm-toolchain-groovy-$Version   main" }
                 'Ubuntu-21.10'    { "deb http://apt.llvm.org/hirsute/  llvm-toolchain-hirsute-$Version  main" }
+                'Ubuntu-22.04'    { "deb http://apt.llvm.org/jammy/    llvm-toolchain-jammy-$Version    main" }
+                'Ubuntu-22.10'    { "deb http://apt.llvm.org/kinetic/  llvm-toolchain-kinetic-$Version  main" }
 
                 default { throw "Unsupported distribution: $distro" }
             }
