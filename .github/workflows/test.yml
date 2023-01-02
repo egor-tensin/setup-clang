@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         platform: [x86, x64]
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-latest, windows-2019, windows-2022, windows-latest]
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
     runs-on: '${{ matrix.os }}'
     name: 'Test: ${{ matrix.os }} / ${{ matrix.platform }}'
     steps:
@@ -37,14 +37,25 @@ jobs:
   versions:
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
-        version: ['3.9', '4.0', 4, '5.0', 5, '6.0', 6, 7, 8, 9, 10, 11, 12, 13]
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+        version: ['3.9', '4.0', 4, '5.0', 5, '6.0', 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         exclude:
           - {os: ubuntu-20.04, version: '3.9'}
           - {os: ubuntu-20.04, version: '4.0'}
           - {os: ubuntu-20.04, version: 4}
           - {os: ubuntu-20.04, version: '5.0'}
           - {os: ubuntu-20.04, version: 5}
+          - {os: ubuntu-22.04, version: '3.9'}
+          - {os: ubuntu-22.04, version: '4.0'}
+          - {os: ubuntu-22.04, version: 4}
+          - {os: ubuntu-22.04, version: '5.0'}
+          - {os: ubuntu-22.04, version: 5}
+          - {os: ubuntu-22.04, version: '6.0'}
+          - {os: ubuntu-22.04, version: 6}
+          - {os: ubuntu-22.04, version: 7}
+          - {os: ubuntu-22.04, version: 8}
+          - {os: ubuntu-22.04, version: 9}
+          - {os: ubuntu-22.04, version: 10}
     runs-on: '${{ matrix.os }}'
     name: 'Version: ${{ matrix.os }} / ${{ matrix.version }}'
     steps:
