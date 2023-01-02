@@ -74,6 +74,9 @@ jobs:
         hardlinks: [0, 1]
     runs-on: windows-latest
     name: 'Cygwin: hardlinks${{ matrix.hardlinks }}'
+    # As of January 2023, clang simply doesn't work on Cygwin.
+    # It's also marked "Unmaintained" in the installer.
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
