@@ -124,7 +124,6 @@ runs:
             $pkg_clang = 'clang'
             $pkg_llvm = 'llvm'
             $pkg_gxx = 'g++'
-            $additional_deps = @()
 
             if (!$latest) {
                 $pkg_version = Format-UpstreamVersion $version
@@ -135,21 +134,11 @@ runs:
 
                 $clang = "$clang-$pkg_version"
                 $clangxx = "$clangxx-$pkg_version"
-
-                if ($pkg_version -eq '13') {
-                    # On both Bionic and Focal, the following error occurs otherwise:
-                    #
-                    # The following packages have unmet dependencies:
-                    #  llvm-13 : Depends: libomp5-13 (>= 8) but it is not going to be installed
-                    # E: Unable to correct problems, you have held broken packages.
-                    $additional_deps += 'libomp5-13'
-                }
             }
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
             $packages = $pkg_clang,$pkg_llvm,$pkg_gxx
-            $packages += $additional_deps
 
             Install-Package $packages
         } elseif ($cygwin_host) {
