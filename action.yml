@@ -75,15 +75,6 @@ runs:
             }
         }
 
-        function Get-DistroVersion {
-            if (!(Get-Command lsb_release -ErrorAction SilentlyContinue)) {
-                throw "Couldn't find lsb_release; LLVM only provides repositories for Debian/Ubuntu"
-            }
-            $distro = lsb_release -is
-            $version = lsb_release -sr
-            "$distro-$version"
-        }
-
         function Format-UpstreamVersion {
             param(
                 [Parameter(Mandatory=$true)]
@@ -102,37 +93,17 @@ runs:
         }
 
         function Format-AptLine {
-            # Source: https://apt.llvm.org/llvm.sh
-            # Don't forget to update once in a while.
-
             param(
                 [Parameter(Mandatory=$true)]
                 [string] $Version
             )
 
-            $distro = Get-DistroVersion
-
-            switch -Wildcard -CaseSensitive ($distro) {
-                'Debian-9*'       { "deb http://apt.llvm.org/stretch/  llvm-toolchain-stretch-$Version  main" }
-                'Debian-10*'      { "deb http://apt.llvm.org/buster/   llvm-toolchain-buster-$Version   main" }
-                'Debian-11*'      { "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-$Version main" }
-                'Debian-unstable' { "deb http://apt.llvm.org/unstable/ llvm-toolchain-$Version main" }
-                'Debian-testing'  { "deb http://apt.llvm.org/unstable/ llvm-toolchain-$Version main" }
-                'Ubuntu-16.04'    { "deb http://apt.llvm.org/xenial/   llvm-toolchain-xenial-$Version   main" }
-                'Ubuntu-18.04'    { "deb http://apt.llvm.org/bionic/   llvm-toolchain-bionic-$Version   main" }
-                'Ubuntu-18.10'    { "deb http://apt.llvm.org/cosmic/   llvm-toolchain-cosmic-$Version   main" }
-                'Ubuntu-19.04'    { "deb http://apt.llvm.org/disco/    llvm-toolchain-disco-$Version    main" }
-                'Ubuntu-19.10'    { "deb http://apt.llvm.org/eoan/     llvm-toolchain-eoan-$Version     main" }
-                'Ubuntu-20.04'    { "deb http://apt.llvm.org/focal/    llvm-toolchain-focal-$Version    main" }
-                # WTF is this? As of 2021-10-15, Ubuntu 20.10 is missing from the upstream llvm.sh,
-                # 21.04 (Hirsute) points to the the previous release (Groovy), and 21.10 (Impish)
-                # also points to the previous release (Hirsute). A mistake on their part?
-                'Ubuntu-20.10'    { "deb http://apt.llvm.org/groovy/   llvm-toolchain-groovy-$Version   main" }
-                'Ubuntu-21.04'    { "deb http://apt.llvm.org/groovy/   llvm-toolchain-groovy-$Version   main" }
-                'Ubuntu-21.10'    { "deb http://apt.llvm.org/hirsute/  llvm-toolchain-hirsute-$Version  main" }
-
-                default { throw "Unsupported distribution: $distro" }
+            if (!(Get-Command lsb_release -ErrorAction SilentlyContinue)) {
+                throw "Couldn't find lsb_release; LLVM only provides repositories for Debian/Ubuntu"
             }
+            $codename = lsb_release -sc
+
+            "deb http://apt.llvm.org/$codename/ llvm-toolchain-$codename-$Version main"
         }
 
         function Add-UpstreamRepo {
