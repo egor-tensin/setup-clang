@@ -142,7 +142,7 @@ runs:
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
-            $packages = $pkg_clang,$pkg_llvm,$pkg_libc,$pkg_gxx
+            $packages = $pkg_clang,$pkg_llvm,$pkg_libc,$pkg_libcabi,$pkg_gxx
 
             Install-Package $packages
         } elseif ($cygwin_host) {
