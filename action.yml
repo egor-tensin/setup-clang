@@ -125,6 +125,7 @@ runs:
             $pkg_llvm = 'llvm'
             $pkg_gxx = 'g++'
             $pkg_libc = 'libc++'
+            $pkg_libcabi = 'libc++abi'
 
             if (!$latest) {
                 $pkg_version = Format-UpstreamVersion $version
@@ -133,6 +134,7 @@ runs:
                 $pkg_clang = "$pkg_clang-$pkg_version"
                 $pkg_llvm = "$pkg_llvm-$pkg_version"
                 $pkg_libc = "$pkg_libc-$pkg_version-dev"
+                $pkg_libcabi = "$pkg_libcabi-$pkg_version-dev"
 
                 $clang = "$clang-$pkg_version"
                 $clangxx = "$clangxx-$pkg_version"
