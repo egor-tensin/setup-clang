@@ -124,6 +124,7 @@ runs:
             $pkg_clang = 'clang'
             $pkg_llvm = 'llvm'
             $pkg_gxx = 'g++'
+            $pkg_libc = 'libc++'
 
             if (!$latest) {
                 $pkg_version = Format-UpstreamVersion $version
@@ -131,6 +132,7 @@ runs:
 
                 $pkg_clang = "$pkg_clang-$pkg_version"
                 $pkg_llvm = "$pkg_llvm-$pkg_version"
+                $pkg_libc = "$pkg_libc-$pkg_version-dev"
 
                 $clang = "$clang-$pkg_version"
                 $clangxx = "$clangxx-$pkg_version"
@@ -138,7 +140,7 @@ runs:
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
-            $packages = $pkg_clang,$pkg_llvm,$pkg_gxx
+            $packages = $pkg_clang,$pkg_llvm,$pkg_libc,$pkg_gxx
 
             Install-Package $packages
         } elseif ($cygwin_host) {
