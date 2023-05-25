@@ -79,6 +79,7 @@ below.
 | 13        | ✓      | ✓     | ✓
 | 14        | ✓      | ✓     | ✓
 | 15        | ✓      | ✓     | ✓
+| 16        | ✓      | ✓     | ✓
 
 This table should be updated periodically; it's a work-in-progress.
 
