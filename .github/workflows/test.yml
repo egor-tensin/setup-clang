@@ -13,7 +13,13 @@ jobs:
     strategy:
       matrix:
         platform: [x86, x64]
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, windows-2019, windows-2022]
+        exclude:
+            # 32-bit builds on ubuntu-24.04 fail due to a bug in Ubuntu linux-azure
+            # kernel that Github runner images use.
+            # See: https://bugs.launchpad.net/ubuntu/+source/linux-signed-azure/+bug/2071445
+            # TODO: Remove this exclusion when the bugfix is available on the runners.
+          - {platform: x86, os: ubuntu-24.04}
     runs-on: '${{ matrix.os }}'
     name: 'Test: ${{ matrix.os }} / ${{ matrix.platform }}'
     steps:
@@ -37,25 +43,24 @@ jobs:
   versions:
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
-        version: ['3.9', '4.0', 4, '5.0', 5, '6.0', 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
+        version: ['6.0', 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
         exclude:
-          - {os: ubuntu-20.04, version: '3.9'}
-          - {os: ubuntu-20.04, version: '4.0'}
-          - {os: ubuntu-20.04, version: 4}
-          - {os: ubuntu-20.04, version: '5.0'}
-          - {os: ubuntu-20.04, version: 5}
-          - {os: ubuntu-22.04, version: '3.9'}
-          - {os: ubuntu-22.04, version: '4.0'}
-          - {os: ubuntu-22.04, version: 4}
-          - {os: ubuntu-22.04, version: '5.0'}
-          - {os: ubuntu-22.04, version: 5}
           - {os: ubuntu-22.04, version: '6.0'}
           - {os: ubuntu-22.04, version: 6}
           - {os: ubuntu-22.04, version: 7}
           - {os: ubuntu-22.04, version: 8}
           - {os: ubuntu-22.04, version: 9}
           - {os: ubuntu-22.04, version: 10}
+          - {os: ubuntu-24.04, version: '6.0'}
+          - {os: ubuntu-24.04, version: 6}
+          - {os: ubuntu-24.04, version: 7}
+          - {os: ubuntu-24.04, version: 8}
+          - {os: ubuntu-24.04, version: 9}
+          - {os: ubuntu-24.04, version: 10}
+          - {os: ubuntu-24.04, version: 11}
+          - {os: ubuntu-24.04, version: 12}
+          - {os: ubuntu-24.04, version: 13}
     runs-on: '${{ matrix.os }}'
     name: 'Version: ${{ matrix.os }} / ${{ matrix.version }}'
     steps:

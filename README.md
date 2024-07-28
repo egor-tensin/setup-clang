@@ -61,28 +61,34 @@ The `version` parameter value is not checked for being an available version for
 the current distribution.
 The supported versions for a particular distribution are those found in that
 distro's repositories & those in the LLVM repository.
-For example, you can find the list of available versions as of January 2023
+For example, you can find the list of available versions as of July 2024
 below.
 
-| `version` | Bionic | Focal | Jammy
-| --------- | ------ | ----- | -----
-| 3.9       | ✓      |       |
-| 4.0       | ✓      |       |
-| 5.0       | ✓      |       |
-| 6.0       | ✓      | ✓     |
-| 7         | ✓      | ✓     |
-| 8         | ✓      | ✓     |
-| 9         | ✓      | ✓     |
-| 10        | ✓      | ✓     |
-| 11        | ✓      | ✓     | ✓
-| 12        | ✓      | ✓     | ✓
-| 13        | ✓      | ✓     | ✓
-| 14        | ✓      | ✓     | ✓
-| 15        | ✓      | ✓     | ✓
+| `version` | Focal | Jammy | Noble
+| --------- | ----- | ----- | -----
+| 6.0       | ✓     |       |
+| 7         | ✓     |       |
+| 8         | ✓     |       |
+| 9         | ✓     |       |
+| 10        | ✓     |       |
+| 11        | ✓     | ✓     |
+| 12        | ✓     | ✓     |
+| 13        | ✓     | ✓     |
+| 14        | ✓     | ✓     | ✓
+| 15        | ✓     | ✓     | ✓
+| 16        | ✓     | ✓     | ✓
+| 17        | ✓     | ✓     | ✓
+| 18        | ✓     | ✓     | ✓
 
 This table should be updated periodically; it's a work-in-progress.
 
 On Windows and Cygwin, the `version` parameter is ignored.
+
+:warning: The 32-bit build on Noble Numbat (Ubuntu 24.04 LTS) is temporarily not supported
+due to a bug in the linux-azure kernel used by Github runner images. See this
+[bug report](https://bugs.launchpad.net/ubuntu/+source/linux-signed-azure/+bug/2071445)
+for more information. Related [issue](https://bugs.launchpad.net/ubuntu/+source/linux-signed-azure/+bug/2071445)
+on actions/runner-images.
 
 License
 -------
