@@ -70,6 +70,11 @@ below.
 | 21        | ✓     | ✓
 
 This table should be updated periodically; it's a work-in-progress.
+(Note to self: the supported versions are those found in [Ubuntu repos] and
+the official [LLVM repos]).
+
+[Ubuntu repos]: https://packages.ubuntu.com/
+[LLVM repos]: https://apt.llvm.org/
 
 On Windows, the `version` parameter is ignored.
 
