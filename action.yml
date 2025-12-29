@@ -110,6 +110,8 @@ runs:
 
         if ($linux_host) {
             $pkg_clang = 'clang'
+            $pkg_clang_format = 'clang-format'
+            $pkg_clang_tidy = 'clang-tidy'
             $pkg_llvm = 'llvm'
             $pkg_gxx = 'g++'
 
@@ -118,6 +120,8 @@ runs:
                 Add-UpstreamRepo $pkg_version
 
                 $pkg_clang = "$pkg_clang-$pkg_version"
+                $pkg_clang_format = "$pkg_clang_format-$pkg_version"
+                $pkg_clang = "$pkg_clang_tidy-$pkg_version"
                 $pkg_llvm = "$pkg_llvm-$pkg_version"
 
                 $clang = "$clang-$pkg_version"
@@ -126,7 +130,7 @@ runs:
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
-            $packages = $pkg_clang,$pkg_llvm,$pkg_gxx
+            $packages = $pkg_clang,$pkg_clang_format,$pkg_clang_tidy,$pkg_llvm,$pkg_gxx
 
             Install-Package $packages
         } elseif ($windows_host) {
