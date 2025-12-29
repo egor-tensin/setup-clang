@@ -55,21 +55,19 @@ distro's repositories & those in the LLVM repository.
 For example, you can find the list of available versions as of January 2023
 below.
 
-| `version` | Bionic | Focal | Jammy
-| --------- | ------ | ----- | -----
-| 3.9       | ✓      |       |
-| 4.0       | ✓      |       |
-| 5.0       | ✓      |       |
-| 6.0       | ✓      | ✓     |
-| 7         | ✓      | ✓     |
-| 8         | ✓      | ✓     |
-| 9         | ✓      | ✓     |
-| 10        | ✓      | ✓     |
-| 11        | ✓      | ✓     | ✓
-| 12        | ✓      | ✓     | ✓
-| 13        | ✓      | ✓     | ✓
-| 14        | ✓      | ✓     | ✓
-| 15        | ✓      | ✓     | ✓
+| `version` | Jammy | Noble
+| --------- | ----- | -----
+| 11        | ✓     |
+| 12        | ✓     |
+| 13        | ✓     |
+| 14        | ✓     | ✓
+| 15        | ✓     | ✓
+| 16        | ✓     | ✓
+| 17        | ✓     | ✓
+| 18        | ✓     | ✓
+| 19        | ✓     | ✓
+| 20        | ✓     | ✓
+| 21        | ✓     | ✓
 
 This table should be updated periodically; it's a work-in-progress.
 
