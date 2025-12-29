@@ -11,7 +11,7 @@ This GitHub action sets up Clang & LLVM in your workflow run.
 Use it in your workflow like this:
 
     - name: Set up Clang
-      uses: egor-tensin/setup-clang@v1
+      uses: egor-tensin/setup-clang@v2
       with:
         version: latest
         platform: x64
