@@ -5,8 +5,7 @@ Set up Clang
 
 This GitHub action sets up Clang & LLVM in your workflow run.
 
-1. Installs either 32-bit or 64-bit Clang & LLVM on either Ubuntu, Windows or
-Cygwin.
+1. Installs either 32-bit or 64-bit Clang & LLVM on either Ubuntu or Windows.
 2. Specify a version to install using the `version` parameter.
 
 Use it in your workflow like this:
@@ -20,13 +19,9 @@ Use it in your workflow like this:
 * `latest` is the default value for the `version` parameter and can be omitted.
 * `x64` is the default value for the `platform` parameter and can be omitted.
 Use `x86` if you want to build 32-bit binaries.
-* Set the `cygwin` parameter to `1` to set up Clang inside an existing Cygwin
-installation (you can set up Cygwin itself using my action [setup-cygwin]).
 * `cc` and `c++` executables are set up, pointing to the `clang` and `clang++`
 executables.
 Disable this by setting the `cc` parameter to `0`.
-
-[setup-cygwin]: https://github.com/egor-tensin/setup-cygwin
 
 API
 ---
@@ -37,12 +32,8 @@ API
 |           | *any*   |         | Install a specific version if it's available (see below).
 | platform  | x64     | ✓       | Install the x86_64 toolchain.
 |           | *any*   |         | Install the i686 toolchain.
-| cygwin    | *any*   | ✓       | Install native binaries.
-|           | 1       |         | Install Cygwin packages.
 | cc        | 1       | ✓       | Set up `cc`/`clang`/`c++`/`clang++` executables.
 |           | *any*   |         | Don't set up the executables.
-| hardlinks | *any*   | ✓       | Cygwin: don't convert any symlinks.
-|           | 1       |         | Cygwin: convert symlinks in /usr/bin to hardlinks.
 
 | Output  | Example   | Description
 | ------- | --------- | -----------
@@ -82,7 +73,7 @@ below.
 
 This table should be updated periodically; it's a work-in-progress.
 
-On Windows and Cygwin, the `version` parameter is ignored.
+On Windows, the `version` parameter is ignored.
 
 License
 -------
