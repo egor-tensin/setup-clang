@@ -22,7 +22,7 @@ runs:
 
             $version = '${{ inputs.version }}'
             if ($version) {
-                $($output | Select-String -Pattern "$script:version." -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
+                $($output | Select-String -Pattern "$version." -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
             }
         }
 
