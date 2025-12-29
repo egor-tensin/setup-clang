@@ -8,8 +8,6 @@ runs:
   using: composite
   steps:
     - run: |
-        $version = '${{ inputs.version }}'
-
         function Check-Exe {
             param(
                 [Parameter(Mandatory=$true)]
@@ -22,7 +20,8 @@ runs:
 
             $($output | Select-String -Pattern "clang version" -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
 
-            if ($script:version) {
+            $version = '${{ inputs.version }}'
+            if ($version) {
                 $($output | Select-String -Pattern "$script:version." -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
             }
         }
