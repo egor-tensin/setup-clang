@@ -52,7 +52,7 @@ The `version` parameter value is not checked for being an available version for
 the current distribution.
 The supported versions for a particular distribution are those found in that
 distro's repositories & those in the LLVM repository.
-For example, you can find the list of available versions as of January 2023
+For example, you can find the list of available versions as of December 2025
 below.
 
 | `version` | Jammy | Noble
