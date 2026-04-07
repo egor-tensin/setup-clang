@@ -32,6 +32,8 @@ jobs:
         uses: ./.github/actions/run-foo
       - name: Check symlinks
         uses: ./.github/actions/check-cc
+      - name: Check lld
+        uses: ./.github/actions/check-lld
 
   versions:
     strategy:
@@ -62,5 +64,9 @@ jobs:
         uses: ./.github/actions/run-foo
       - name: Check symlinks
         uses: ./.github/actions/check-cc
+        with:
+          version: '${{ matrix.version }}'
+      - name: Check lld
+        uses: ./.github/actions/check-lld
         with:
           version: '${{ matrix.version }}'

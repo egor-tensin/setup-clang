@@ -107,6 +107,7 @@ runs:
 
         $clang = 'clang'
         $clangxx = 'clang++'
+        $lld = 'ld.lld'
 
         if ($linux_host) {
             $pkg_clang = 'clang'
@@ -114,6 +115,7 @@ runs:
             $pkg_clang_tidy = 'clang-tidy'
             $pkg_llvm = 'llvm'
             $pkg_gxx = 'g++'
+            $pkg_lld = 'lld'
 
             if (!$latest) {
                 $pkg_version = Format-UpstreamVersion $version
@@ -123,14 +125,16 @@ runs:
                 $pkg_clang_format = "$pkg_clang_format-$pkg_version"
                 $pkg_clang = "$pkg_clang_tidy-$pkg_version"
                 $pkg_llvm = "$pkg_llvm-$pkg_version"
+                $pkg_lld = "$pkg_lld-$pkg_version"
 
                 $clang = "$clang-$pkg_version"
                 $clangxx = "$clangxx-$pkg_version"
+                $lld = "$lld-$pkg_version"
             }
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
-            $packages = $pkg_clang,$pkg_clang_format,$pkg_clang_tidy,$pkg_llvm,$pkg_gxx
+            $packages = $pkg_clang,$pkg_clang_format,$pkg_clang_tidy,$pkg_llvm,$pkg_gxx,$pkg_lld
 
             Install-Package $packages
         } elseif ($windows_host) {
@@ -144,6 +148,7 @@ runs:
 
         echo "clang=$clang"     >> $env:GITHUB_OUTPUT
         echo "clangxx=$clangxx" >> $env:GITHUB_OUTPUT
+        echo "lld=$lld"         >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - run: |

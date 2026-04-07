@@ -39,6 +39,7 @@ API
 | ------- | --------- | -----------
 | clang   | clang-4.0 | `clang` binary name
 | clangxx | clang++-7 | `clang++` binary name
+| lld     | ld.lld-10 | `ld.lld` binary name
 
 Supported versions
 ------------------

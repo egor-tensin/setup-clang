@@ -1,0 +1,41 @@
+name: Check LLD
+description: Check LLD
+inputs:
+  version:
+    description: Specific version to check
+    required: false
+runs:
+  using: composite
+  steps:
+    - run: |
+        function Check-Exe {
+            param(
+                [Parameter(Mandatory=$true)]
+                [string] $Exe,
+                [Parameter(Mandatory=$true)]
+                [string] $HelpString
+            )
+
+            echo (Get-Command $Exe).Path
+            $output = & $Exe --version 2>&1
+            echo $output
+
+            $($output | Select-String -Pattern $HelpString -SimpleMatch -Quiet) -or $(throw "Unexpected `$Exe --version` output")
+        }
+
+        $version = '${{ inputs.version }}'
+
+        $driver_exe = 'lld'
+        # Although the output of `lld --version` claims that it's ld-link on
+        # Windows, the Chocolatey version at least still uses ld.lld as on
+        # Linux.
+        $real_exe = 'ld.lld'
+
+        if ($version) {
+            $driver_exe = "$driver_exe-$version"
+            $real_exe = "$real_exe-$version"
+        }
+
+        Check-Exe $driver_exe 'lld is a generic driver'
+        Check-Exe $real_exe "LLD $version"
+      shell: pwsh
