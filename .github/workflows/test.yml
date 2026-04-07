@@ -36,6 +36,7 @@ jobs:
         uses: ./.github/actions/check-lld
 
   versions:
+    needs: test
     strategy:
       # A weak attempt to please Ubuntu servers:
       max-parallel: 4
