@@ -46,14 +46,14 @@ Supported versions
 
 Unless the `version` parameter value is "latest", the official LLVM repository
 is used to make more versions available.
-You can pass the version number as the `version` parameter value (`5.0`, `8`,
-`9`, etc.), and this action will install the corresponding packages.
+You can pass the version number as the `version` parameter value (`13`, `17`,
+`20`, etc.), and this action will install the corresponding packages.
 
 The `version` parameter value is not checked for being an available version for
 the current distribution.
 The supported versions for a particular distribution are those found in that
 distro's repositories & those in the LLVM repository.
-For example, you can find the list of available versions as of December 2025
+For example, you can find the list of available versions as of April 2026
 below.
 
 | `version` | Jammy | Noble
@@ -69,6 +69,7 @@ below.
 | 19        | ✓     | ✓
 | 20        | ✓     | ✓
 | 21        | ✓     | ✓
+| 22        | ✓     | ✓
 
 This table should be updated periodically; it's a work-in-progress.
 (Note to self: the supported versions are those found in [Ubuntu repos] and
