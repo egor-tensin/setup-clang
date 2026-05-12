@@ -114,6 +114,7 @@ runs:
             $pkg_clang_format = 'clang-format'
             $pkg_clang_tidy = 'clang-tidy'
             $pkg_llvm = 'llvm'
+            $pkg_rt_dev = 'libclang-rt-dev'
             $pkg_gxx = 'g++'
             $pkg_lld = 'lld'
 
@@ -125,6 +126,7 @@ runs:
                 $pkg_clang_format = "$pkg_clang_format-$pkg_version"
                 $pkg_clang = "$pkg_clang_tidy-$pkg_version"
                 $pkg_llvm = "$pkg_llvm-$pkg_version"
+                $pkg_rt_dev = "libclang-rt-$pkg_version-dev"
                 $pkg_lld = "$pkg_lld-$pkg_version"
 
                 $clang = "$clang-$pkg_version"
@@ -134,7 +136,24 @@ runs:
             if (!$x64) {
                 $pkg_gxx = 'g++-multilib'
             }
+
             $packages = $pkg_clang,$pkg_clang_format,$pkg_clang_tidy,$pkg_llvm,$pkg_gxx,$pkg_lld
+
+            # The rt-dev library doesn't seem to exist for versions below 14:
+            #     https://apt.llvm.org/jammy/pool/main/l/
+            if ($latest -or [int]$version -ge 14) {
+                if (Select-String -Path /etc/os-release -Pattern 'VERSION_CODENAME=jammy' -SimpleMatch -Quiet) {
+                    if (-not $latest -and [int]$version -ne 15) {
+                        # On Jammy, there's a file conflict between rt-dev and common-dev for version 15.
+                        # Additionally, the whole installation thing was only checked on Github-hosted
+                        # runners (Jammy & Noble at the moment of writing).
+                        # _And_ there's no default libclang-rt-dev package on Jammy.
+                        $packages += $pkg_rt_dev
+                    }
+                } else {
+                    $packages += $pkg_rt_dev
+                }
+            }
 
             Install-Package $packages
         } elseif ($windows_host) {
