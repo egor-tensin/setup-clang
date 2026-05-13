@@ -97,6 +97,9 @@ version-specific, so `version: latest` (the default value) wouldn't work.
 `libclang-common-15-dev`, which means that version 15 wouldn't work.
 * This is continuously tested on Github-hosted runners, but hasn't been tested
 on any self-hosted runners.
+* `libclang-rt-dev` doesn't seem to exist for versions [below 14].
+
+[below 14]: https://apt.llvm.org/jammy/pool/main/l/
 
 License
 -------
