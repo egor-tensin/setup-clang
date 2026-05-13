@@ -80,6 +80,24 @@ the official [LLVM repos]).
 
 On Windows, the `version` parameter is ignored.
 
+Caveats
+-------
+
+### libclang-rt-dev
+
+**TL;DR**: if you use a Github-hosted Jammy (22.04) runner, you must specify
+a specific value as the `version` parameter.
+And version 15 is off-limits on this distro.
+
+* As of May '26, there are two Ubuntu-based Github-hosted runners: based on
+Jammy and Noble.
+* On Jammy, there's no `libclang-rt-dev` package, the package names are
+version-specific, so `version: latest` (the default value) wouldn't work.
+* In addition, the `libclang-rt-15-dev` package conflicts with
+`libclang-common-15-dev`, which means that version 15 wouldn't work.
+* This is continuously tested on Github-hosted runners, but hasn't been tested
+on any self-hosted runners.
+
 License
 -------
 
