@@ -1,5 +1,5 @@
-name: Build foo.exe
-description: Build foo.exe
+name: Build threads.exe
+description: Build threads.exe
 inputs:
   binary:
     description: Compiler binary file name
@@ -19,7 +19,7 @@ runs:
         if ('${{ matrix.platform }}' -eq 'x86') {
             $flags += '-m32'
         }
-        $flags += '-std=c++14','-o','foo.exe','foo.cpp'
+        $flags += '-std=c++14','-o','test/threads.exe','test/threads.cpp'
         if ('${{ runner.os }}' -eq 'Linux') {
             $flags += '-lpthread'
         }
