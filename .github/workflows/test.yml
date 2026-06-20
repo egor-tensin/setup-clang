@@ -19,7 +19,7 @@ jobs:
     name: 'Test: ${{ matrix.os }} / ${{ matrix.platform }}'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Clean up PATH
         uses: egor-tensin/cleanup-path@v5
         if: runner.os == 'Windows'
@@ -53,7 +53,7 @@ jobs:
     name: 'Version: ${{ matrix.os }} / ${{ matrix.version }}'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - id: setup
         name: Set up Clang
         uses: ./
