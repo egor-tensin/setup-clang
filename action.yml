@@ -100,7 +100,7 @@ runs:
                 [string] $Version
             )
 
-            wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+            wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
             $apt_line = Format-AptLine $Version
             sudo add-apt-repository --yes --update $apt_line
         }
