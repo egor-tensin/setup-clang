@@ -9,33 +9,38 @@ on:
     - cron: '30 00 * * 5'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   test:
     strategy:
       matrix:
         platform: [x86, x64]
         os: [ubuntu-22.04, ubuntu-24.04, ubuntu-26.04, windows-2022, windows-2025]
-    runs-on: '${{ matrix.os }}'
-    name: 'Test: ${{ matrix.os }} / ${{ matrix.platform }}'
+    runs-on: ${{ matrix.os }}
+    name: |
+      Test: ${{ matrix.os }} / ${{ matrix.platform }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Clean up PATH
         uses: egor-tensin/cleanup-path@v5
         if: runner.os == 'Windows'
       - name: Set up Clang
-        uses: ./
+        uses: $/
         with:
-          platform: '${{ matrix.platform }}'
+          platform: ${{ matrix.platform }}
           cc: 1
       - name: Build threads.exe
-        uses: ./.github/actions/build-threads
+        uses: $/.github/actions/build-threads
       - name: Run threads.exe
-        uses: ./.github/actions/run-threads
+        uses: $/.github/actions/run-threads
       - name: Check symlinks
-        uses: ./.github/actions/check-cc
+        uses: $/.github/actions/check-cc
       - name: Check lld
-        uses: ./.github/actions/check-lld
+        uses: $/.github/actions/check-lld
 
   test_versions:
     needs: test
@@ -55,32 +60,35 @@ jobs:
           - {os: ubuntu-26.04, version: 14}
           - {os: ubuntu-26.04, version: 15}
           - {os: ubuntu-26.04, version: 16}
-    runs-on: '${{ matrix.os }}'
-    name: 'Version: ${{ matrix.os }} / ${{ matrix.version }}'
+    runs-on: ${{ matrix.os }}
+    name: |
+      Version: ${{ matrix.os }} / ${{ matrix.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - id: setup
         name: Set up Clang
-        uses: ./
+        uses: $/
         with:
-          version: '${{ matrix.version }}'
-          platform: '${{ matrix.platform }}'
+          version: ${{ matrix.version }}
+          platform: ${{ matrix.platform }}
           cc: 1
       - name: Build threads.exe
-        uses: ./.github/actions/build-threads
+        uses: $/.github/actions/build-threads
         with:
-          binary: '${{ steps.setup.outputs.clangxx }}'
+          binary: ${{ steps.setup.outputs.clangxx }}
       - name: Run threads.exe
-        uses: ./.github/actions/run-threads
+        uses: $/.github/actions/run-threads
       - name: Check symlinks
-        uses: ./.github/actions/check-cc
+        uses: $/.github/actions/check-cc
         with:
-          version: '${{ matrix.version }}'
+          version: ${{ matrix.version }}
       - name: Check lld
-        uses: ./.github/actions/check-lld
+        uses: $/.github/actions/check-lld
         with:
-          version: '${{ matrix.version }}'
+          version: ${{ matrix.version }}
 
   release:
     if: github.ref_type == 'tag'
@@ -94,5 +102,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Release
         uses: softprops/action-gh-release@v3
